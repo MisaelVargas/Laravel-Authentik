@@ -31,11 +31,13 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
-    'authentik' => [
-        'base_url' => env('AUTHENTIK_BASE_URL'),
-        'client_id' => env('AUTHENTIK_CLIENT_ID'),
-        'client_secret' => env('AUTHENTIK_CLIENT_SECRET'),
-        'redirect' => env('AUTHENTIK_REDIRECT_URI')
+    'cognito' => [
+        'host' => env('COGNITO_HOST'),
+        'client_id' => env('COGNITO_CLIENT_ID'),
+        'client_secret' => env('COGNITO_CLIENT_SECRET'),
+        'redirect' => env('COGNITO_CALLBACK_URL'),
+        'scope' => explode(",", env('COGNITO_LOGIN_SCOPE')),
+        'logout_uri' => env('COGNITO_SIGN_OUT_URL')
     ],
-      
+    
 ];

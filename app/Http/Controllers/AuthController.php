@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Http\JsonResponse;
 
 // use Furdarius\OIDConnect\Exception\AuthenticationException;
 // use Furdarius\OIDConnect\Exception\TokenStorageException;
 // use Furdarius\OIDConnect\TokenRefresher;
 // use Furdarius\OIDConnect\TokenStorage;
-// use Illuminate\Http\JsonResponse;
 // use Illuminate\Http\Request;
 // use Illuminate\Routing\Controller as BaseController;
 // use Lcobucci\JWT\Parser;
@@ -23,7 +23,9 @@ class AuthController extends Controller
      */
     public function redirect()
     {
-        return Socialite::driver('authentik')->stateless()->redirect();
+        $scopes = explode(",", env('COGNITO_LOGIN_SCOPE'));
+        
+        return Socialite::driver('cognito')->setScopes($scopes)->redirect();
     }
 
     /**
@@ -32,7 +34,7 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function callback(Request $request, TokenStorage $storage)
+    public function callback(Request $request)
     {
         // // TODO: handle CORS more elegant way
         // if ($request->getMethod() === 'OPTIONS') {
@@ -43,17 +45,19 @@ class AuthController extends Controller
         // }
 
         /** @var \Laravel\Socialite\Two\User $user */
-        $user = Socialite::driver('authentik')->stateless()->user();
+        $user = Socialite::driver('cognito')->stateless()->user();
 
         // if (!$storage->saveRefresh($user['sub'], $user['iss'], $user->refreshToken)) {
         //     throw new TokenStorageException("Failed to save refresh token");
         // }
 
-        return $this->responseJson([
-            'name' => $user->getName(),
-            'email' => $user->getEmail(),
-            'token' => $user->token,
-        ]);
+        return json_encode($user);
+
+        // return $this->responseJson([
+        //     'name' => $user->getName(),
+        //     'email' => $user->getEmail(),
+        //     'token' => $user->token,
+        // ]);
     }
 
     /**
@@ -104,5 +108,17 @@ class AuthController extends Controller
         return $this->responseJson([
             'token' => $refreshedIDToken,
         ]);
+    }
+
+    /**
+     * @param Request        $request
+     * @param TokenRefresher $refresher
+     * @param Parser         $parser
+     *
+     * @return AuthenticationException|JsonResponse
+     */
+    public function logout(Request $request, TokenRefresher $refresher, Parser $parser)
+    {
+
     }
 }

@@ -19,8 +19,7 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         \SocialiteProviders\Manager\SocialiteWasCalled::class => [
-            // ... other providers
-            \SocialiteProviders\Authentik\AuthentikExtendSocialite::class.'@handle',
+            \SocialiteProviders\Cognito\CognitoExtendSocialite::class.'@handle',
         ],
     ];
 
