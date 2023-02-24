@@ -27,3 +27,7 @@ Route::get('login', [AuthController::class, 'callback']);
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/example', function (Request $request) {
+    return $request->route()->middleware();
+});
